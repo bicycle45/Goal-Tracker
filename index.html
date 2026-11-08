@@ -14,7 +14,8 @@
   header { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; }
   h1 { font-size:26px; margin:0; font-weight:700; }
   .edit-btn { background:none; border:0; color:var(--dim); font-size:16px; padding:6px; cursor:pointer; }
-  h2 { font-size:20px; font-weight:700; margin:28px 0 4px; display:flex; justify-content:space-between; align-items:baseline; }
+  h2 { font-size:20px; font-weight:700; margin:28px 0 8px; display:flex; justify-content:space-between; align-items:baseline; }
+  h2.bare { margin-top:18px; }
   h2 small { font-size:13px; font-weight:400; color:var(--dim); }
   h3 { font-size:13px; text-transform:uppercase; letter-spacing:.08em; color:var(--dim);
     font-weight:600; margin:14px 0 6px; display:flex; justify-content:space-between; }
@@ -24,6 +25,7 @@
     cursor:pointer; user-select:none; }
   .item:first-child { border-top:0; }
   .name { flex:1; transition:color .15s; }
+  .sub { font-size:13px; color:var(--dim); margin-top:3px; }
   .item.done .name { text-decoration:line-through; color:var(--dim); }
   .dots { display:flex; gap:6px; }
   .dot { width:12px; height:12px; border-radius:50%; border:1.5px solid var(--dim); }
@@ -37,43 +39,64 @@
   .row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
   form button { background:var(--accent); color:#111; border:0; border-radius:10px; padding:12px; font:inherit;
     font-weight:600; cursor:pointer; }
+  form.inline { margin-top:10px; display:flex; gap:8px; padding:8px; }
+  form.inline input { flex:1; }
+  form.inline button { padding:10px 16px; flex:none; }
+  .tabs { position:relative; display:flex; gap:4px; background:var(--card); border-radius:12px; padding:4px;
+    margin:12px 0 4px; overflow-x:auto; scrollbar-width:none; }
+  .tabs::-webkit-scrollbar { display:none; }
+  .tab { flex:1 0 auto; white-space:nowrap; background:none; border:0; color:var(--dim); font:inherit; font-size:15px;
+    font-weight:600; padding:9px 12px; border-radius:9px; cursor:pointer; }
+  .tab.on { background:#2e2e2e; color:var(--text); }
+  .tab { touch-action:manipulation; }
+  .tab.add { flex:0 0 auto; font-size:19px; font-weight:400; padding:6px 12px; }
+  .check { width:22px; height:22px; border-radius:50%; border:1.5px solid var(--dim); flex:none;
+    display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; color:#111; }
+  .item.done .check { background:var(--accent); border-color:var(--accent); }
+  .clear { background:none; border:0; color:var(--dim); font-size:13px; cursor:pointer; padding:0; }
+  form.addrow { margin:0; background:none; border-radius:0; padding:12px 16px; display:flex; align-items:center;
+    gap:12px; border-top:1px solid var(--line); }
+  .list form.addrow:first-child { border-top:0; }
+  form.addrow input { background:none; border:0; padding:0; border-radius:0; outline:none; }
+  form.addrow input::placeholder { color:var(--dim); }
+  .plus { width:22px; text-align:center; color:var(--dim); font-size:21px; line-height:1; flex:none; }
+  .danger { width:100%; margin-top:16px; background:none; border:1px solid #4a2a2a; color:#d26b6b;
+    border-radius:10px; padding:12px; font:inherit; cursor:pointer; }
+  .toast { position:fixed; left:50%; transform:translateX(-50%); bottom:calc(18px + env(safe-area-inset-bottom));
+    width:calc(100% - 36px); max-width:484px; background:#2e2e2e; border-radius:12px; padding:13px 16px;
+    display:flex; justify-content:space-between; align-items:center; overflow:hidden; font-size:15px;
+    box-shadow:0 8px 24px rgba(0,0,0,.45); z-index:10; }
+  .toast button { background:none; border:0; color:var(--text); font:inherit; font-weight:700; cursor:pointer; padding:0 0 0 12px; }
+  .toast .bar { position:absolute; left:0; bottom:0; height:3px; width:100%; background:var(--accent);
+    animation:shrink 10s linear forwards; }
+  @keyframes shrink { from { width:100%; } to { width:0; } }
   .note { color:var(--dim); font-size:13px; margin-top:22px; text-align:center; }
 </style>
 </head>
 <body>
 <div class="wrap" id="root"></div>
-<script type="application/json" id="state">{"updated":0,"items":[
-{"id":"r1","section":"Routines","group":"Morning","name":"Getting ready","period":"day","count":1,"done":0,"key":""},
-{"id":"r2","section":"Routines","group":"Morning","name":"Breakfast","period":"day","count":1,"done":0,"key":""},
-{"id":"r3","section":"Routines","group":"Morning","name":"Planning","period":"day","count":1,"done":0,"key":""},
-{"id":"r4","section":"Routines","group":"Night","name":"Getting ready","period":"day","count":1,"done":0,"key":""},
-{"id":"r5","section":"Routines","group":"Night","name":"Reading","period":"day","count":1,"done":0,"key":""},
-{"id":"r6","section":"Routines","group":"Night","name":"Reflection","period":"day","count":1,"done":0,"key":""},
-{"id":"a1","section":"Activities","group":"Health","name":"Meditation","period":"day","count":1,"done":0,"key":""},
-{"id":"a2","section":"Activities","group":"Health","name":"Cardio","period":"day","count":1,"done":0,"key":""},
-{"id":"a3","section":"Activities","group":"Health","name":"Walk","period":"day","count":1,"done":0,"key":""},
-{"id":"a4","section":"Activities","group":"Productivity","name":"UCAT","period":"day","count":1,"done":0,"key":""},
-{"id":"a5","section":"Activities","group":"Productivity","name":"Reading","period":"day","count":1,"done":0,"key":""},
-{"id":"a6","section":"Activities","group":"Productivity","name":"Knowledge","period":"day","count":1,"done":0,"key":""},
-{"id":"a7","section":"Activities","group":"Productivity","name":"Content","period":"day","count":1,"done":0,"key":""},
-{"id":"m1","section":"Meals","group":"Lunch","name":"Consume supplements","period":"day","count":1,"done":0,"key":""},
-{"id":"m2","section":"Meals","group":"Lunch","name":"Light movement","period":"day","count":1,"done":0,"key":""},
-{"id":"m3","section":"Meals","group":"Dinner","name":"Finish eating early","period":"day","count":1,"done":0,"key":""},
-{"id":"m4","section":"Meals","group":"Dinner","name":"Post meal walk","period":"day","count":1,"done":0,"key":""},
-{"id":"t1","section":"Indulgence","group":"This month","name":"Late nights","period":"month","count":2,"done":0,"key":""},
-{"id":"t2","section":"Indulgence","group":"This month","name":"Cheat meal","period":"month","count":4,"done":0,"key":""}
-]}</script>
+<script type="application/json" id="state">{"updated":1794117511392,"items":[{"id":"r1","section":"Routines","group":"Morning","name":"Getting ready","period":"day","count":1,"done":0,"key":"2026-11-08"},{"id":"r2","section":"Routines","group":"Morning","name":"Breakfast","period":"day","count":1,"done":0,"key":""},{"id":"r3","section":"Routines","group":"Morning","name":"Planning","period":"day","count":1,"done":0,"key":""},{"id":"r4","section":"Routines","group":"Night","name":"Getting ready","period":"day","count":1,"done":0,"key":""},{"id":"r5","section":"Routines","group":"Night","name":"Reading","period":"day","count":1,"done":0,"key":""},{"id":"r6","section":"Routines","group":"Night","name":"Reflection","period":"day","count":1,"done":0,"key":""},{"id":"a1","section":"Activities","group":"Health","name":"Meditation","period":"day","count":1,"done":0,"key":""},{"id":"a2","section":"Activities","group":"Health","name":"Cardio","period":"day","count":1,"done":0,"key":""},{"id":"a3","section":"Activities","group":"Health","name":"Walk","period":"day","count":1,"done":0,"key":""},{"id":"a4","section":"Activities","group":"Productivity","name":"UCAT","period":"day","count":1,"done":0,"key":""},{"id":"a5","section":"Activities","group":"Productivity","name":"Reading","period":"day","count":1,"done":0,"key":""},{"id":"a6","section":"Activities","group":"Productivity","name":"Knowledge","period":"day","count":1,"done":0,"key":""},{"id":"a7","section":"Activities","group":"Productivity","name":"Content","period":"day","count":1,"done":0,"key":""},{"id":"m1","section":"Meals","group":"Lunch","name":"Consume supplements","period":"day","count":1,"done":0,"key":""},{"id":"m2","section":"Meals","group":"Lunch","name":"Light movement","period":"day","count":1,"done":0,"key":""},{"id":"m3","section":"Meals","group":"Dinner","name":"Finish eating early","period":"day","count":1,"done":0,"key":""},{"id":"m4","section":"Meals","group":"Dinner","name":"Post meal walk","period":"day","count":1,"done":0,"key":"2026-11-08"},{"id":"t1","section":"Indulgence","group":"This month","name":"Late nights","period":"month","count":2,"done":0,"key":""},{"id":"t2","section":"Indulgence","group":"This month","name":"Cheat meal","period":"month","count":4,"done":0,"key":"2026-11"}],"pages":[{"id":"tasks","name":"Tasks","lists":["Current","Waiting"]},{"id":"subs","name":"Subscriptions","lists":[""]},{"id":"wish","name":"Wish List","lists":[""]}],"tasks":[{"id":"k3","page":"tasks","list":"Current","name":"Get orange lights for my house","done":false},{"id":"k4","page":"tasks","list":"Current","name":"Maybe return my IKEA lamp","done":false},{"id":"k5","page":"tasks","list":"Current","name":"Fix up my cables","done":false},{"id":"k6","page":"tasks","list":"Current","name":"Work on my perfectionism","done":false},{"id":"k7","page":"tasks","list":"Current","name":"Figure out what to do with my old walking pad","done":false},{"id":"k8","page":"tasks","list":"Current","name":"Return my XM5","done":false},{"id":"s2","page":"subs","list":"","name":"iCloud 50GB - 1 month","note":"Nov 30","done":false,"due":"2026-11-30","anchor":30},{"id":"s3","page":"subs","list":"","name":"Claude Pro - 1 month","note":"Dec 5","done":false,"due":"2026-12-05","anchor":5},{"id":"s4","page":"subs","list":"","name":"Prime Video - 1 month","note":"Nov 23","done":false,"due":"2026-11-23","anchor":23},{"id":"s5","page":"subs","list":"","name":"Amazon Prime - 1 year","note":"Oct 23, 2027","done":false,"due":"2027-10-23","anchor":23},{"id":"w1","page":"wish","list":"","name":"Gymshark compression - $55","done":false},{"id":"w2","page":"wish","list":"","name":"Black denim pants - $130","done":false},{"id":"w3","page":"wish","list":"","name":"Air Force 1's - $200","done":false},{"id":"w4","page":"wish","list":"","name":"Summer button down shirt - $50","done":false},{"id":"w5","page":"wish","list":"","name":"Custom keyboard - $300","done":false}]}</script>
 <script id="app">
 (function(){
-  var state = JSON.parse(document.getElementById('state').textContent);
+  var seed = JSON.parse(document.getElementById('state').textContent);
+  var state = seed;
   var LS = 'simple-tracker-state-v2';
   try {
     var local = JSON.parse(localStorage.getItem(LS) || 'null');
     if (local && local.updated > state.updated) state = local;
   } catch(e) {}
-
-  var editing = false, art = null, timer = null;
-
+  if (!state.tasks) { state.tasks = seed.tasks; state.pages = seed.pages; }
+  else if (!state.pages) {
+    state.pages = seed.pages;
+    state.tasks.forEach(function(x){ if (!x.page) x.page = 'tasks'; });
+    seed.tasks.forEach(function(x){ if (x.page !== 'tasks') state.tasks.push(x); });
+  }
+  delete state.lists;
+ 
+  var editing = false, art = null, timer = null, addingTab = false, confirmDel = false, renaming = null, lastTap = { id: null, t: 0 };
+  var TAB_LS = 'simple-tracker-tab', tab = 'goals';
+  try { tab = localStorage.getItem(TAB_LS) || 'goals'; } catch(e) {}
+ 
   function pad(n){ return n < 10 ? '0'+n : ''+n; }
   function keyFor(period){
     var d = new Date(), m = d.getFullYear()+'-'+pad(d.getMonth()+1);
@@ -82,13 +105,144 @@
   function used(it){ return it.key === keyFor(it.period) ? it.done : 0; }
   function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
   function uniq(arr){ var o=[]; arr.forEach(function(x){ if (o.indexOf(x) < 0) o.push(x); }); return o; }
-
+  function page(id){ for (var i=0;i<state.pages.length;i++) if (state.pages[i].id === id) return state.pages[i]; return null; }
+  function money(s){ var m = String(s).match(/\$\s?(\d[\d,]*(?:\.\d+)?)/); return m ? parseFloat(m[1].replace(/,/g,'')) : 0; }
+  var MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function today0(){ var d = new Date(); return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+  function ymd(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+  function fromYmd(s){ var q = s.split('-'); return new Date(+q[0], +q[1]-1, +q[2]); }
+  function monIdx(s){ return 'janfebmaraprmayjunjulaugsepoctnovdec'.indexOf(s.slice(0,3).toLowerCase()) / 3; }
+  function parseNote(s){
+    s = String(s || '').trim(); var m, mo, d, y;
+    if ((m = s.match(/^([A-Za-z]{3,})\.?\s+(\d{1,2})(?:st|nd|rd|th)?(?:,?\s+(\d{4}))?$/))) { mo = monIdx(m[1]); d = +m[2]; y = m[3]; }
+    else if ((m = s.match(/^(\d{1,2})(?:st|nd|rd|th)?\s+([A-Za-z]{3,})\.?(?:,?\s+(\d{4}))?$/))) { mo = monIdx(m[2]); d = +m[1]; y = m[3]; }
+    else return null;
+    if (mo < 0 || mo % 1 || d < 1 || d > 31) return null;
+    return { y: y ? +y : today0().getFullYear(), m: mo, d: d };
+  }
+  function periodOf(name){
+    var m = String(name).match(/(\d+)\s*(day|week|month|year)s?\b/i);
+    if (m) return { n: +m[1], u: m[2].toLowerCase() };
+    m = String(name).match(/\b(daily|weekly|monthly|yearly|annual(?:ly)?)\b/i);
+    if (!m) return null;
+    var w = m[1].toLowerCase();
+    return { n: 1, u: w === 'daily' ? 'day' : w === 'weekly' ? 'week' : w === 'monthly' ? 'month' : 'year' };
+  }
+  function dateAt(y, m, d){ var last = new Date(y, m+1, 0).getDate(); return new Date(y, m, Math.min(d, last)); }
+  function step(date, p, anchor){
+    if (p.u === 'day') return new Date(date.getFullYear(), date.getMonth(), date.getDate() + p.n);
+    if (p.u === 'week') return new Date(date.getFullYear(), date.getMonth(), date.getDate() + 7*p.n);
+    return dateAt(date.getFullYear(), date.getMonth() + (p.u === 'month' ? p.n : 12*p.n), anchor);
+  }
+  function fmtDate(d){ return MON[d.getMonth()]+' '+d.getDate()+(d.getFullYear() !== today0().getFullYear() ? ', '+d.getFullYear() : ''); }
+  function rollover(){
+    var changed = false, t0 = today0();
+    state.tasks.forEach(function(x){
+      var p = periodOf(x.name); if (!p) return;
+      if (!x.due) {
+        var pn = parseNote(x.note); if (!pn) return;
+        x.due = ymd(dateAt(pn.y, pn.m, pn.d)); x.anchor = pn.d; changed = true;
+      }
+      var d = fromYmd(x.due), guard = 0;
+      while (d < t0 && guard++ < 1000) d = step(d, p, x.anchor || d.getDate());
+      var nd = ymd(d), nn = fmtDate(d);
+      if (nd !== x.due || nn !== x.note) { x.due = nd; x.note = nn; changed = true; }
+    });
+    return changed;
+  }
+  function dueText(x){
+    if (!x.due) return '';
+    var n = Math.round((fromYmd(x.due) - today0()) / 86400000);
+    return n <= 0 ? ' · renews today' : n === 1 ? ' · renews tomorrow' : ' · renews in ' + n + ' days';
+  }
+  function splitPrice(name){
+    var m = String(name).match(/^(.*?)\s*[-–—]?\s*(\$\s?\d[\d,]*(?:\.\d+)?)\s*$/);
+    return m && m[1] ? { name: m[1], price: m[2].replace(/\s/g, '') } : null;
+  }
+  function splitPeriod(name){
+    var m = String(name).match(/^(.*?)\s*[-–—]?\s*(\d+\s*(?:day|week|month|year)s?|daily|weekly|monthly|yearly|annual(?:ly)?)\s*$/i);
+    return m && m[1] ? { name: m[1], period: m[2] } : null;
+  }
+  function setTab(t){ tab = t; editing = false; addingTab = false; confirmDel = false; try { localStorage.setItem(TAB_LS, tab); } catch(e) {} }
+  if (tab !== 'goals' && !page(tab)) tab = 'goals';
+ 
+  var rename = null, goalSnap = null, pending = {};
+  function completeTask(id){
+    var idx = -1;
+    for (var i=0;i<state.tasks.length;i++) if (state.tasks[i].id === id) idx = i;
+    if (idx < 0) return;
+    var task = state.tasks[idx];
+    pending[id] = { task: task, idx: idx, at: Date.now(), timer: setTimeout(function(){ delete pending[id]; render(); }, 10000) };
+    change(function(){ state.tasks.splice(idx, 1); });
+  }
+  function restoreTask(id){
+    var pd = pending[id]; if (!pd) return;
+    clearTimeout(pd.timer); delete pending[id];
+    state.tasks.splice(Math.min(pd.idx, state.tasks.length), 0, pd.task);
+  }
+  function viewTasks(){
+    var arr = state.tasks.slice();
+    Object.keys(pending).map(function(k){ return pending[k]; }).sort(function(a,b){ return a.idx - b.idx; })
+      .forEach(function(pd){ arr.splice(Math.min(pd.idx, arr.length), 0, pd.task); });
+    return arr;
+  }
+  function toastHtml(){
+    var ks = Object.keys(pending); if (!ks.length) return '';
+    var latest = 0; ks.forEach(function(k){ latest = Math.max(latest, pending[k].at); });
+    var gone = Math.min(10, (Date.now() - latest) / 1000);
+    return '<div class="toast"><span>'+(ks.length === 1 ? 'Task crossed off' : ks.length+' tasks crossed off')+'</span>'
+      + '<button id="undo">Undo</button><div class="bar" style="animation-delay:-'+gone.toFixed(2)+'s"></div></div>';
+  }
+  function isRen(k, key){ return !!rename && rename.kind === k && rename.key === key; }
+  function renForm(v, row){
+    return '<form id="renameform" class="'+(row?'addrow':'inline')+'">'+(row?'<span class="plus">✎</span>':'')
+      + '<input id="rn2" value="'+esc(v)+'" maxlength="100" enterkeyhint="done">'
+      + (row?'':'<button type="submit">Save</button>')+'</form>';
+  }
+  function dbl(key){
+    var now = Date.now();
+    if (lastTap.id === key && now - lastTap.t < 400) { lastTap = { id: null, t: 0 }; return true; }
+    lastTap = { id: key, t: now }; return false;
+  }
+  function focusRen(){ var el = document.getElementById('rn2'); if (el) { el.focus(); el.select(); } }
+  function openRename(k, key){ rename = { kind: k, key: key }; renaming = null; render(); focusRen(); }
+  function commitRename(){
+    if (!rename) return;
+    var r = rename, el = document.getElementById('rn2'), v = el ? el.value.trim() : '';
+    rename = null;
+    if (!el || (!v && r.kind !== 'list')) { render(); return; }
+    change(function(){
+      if (r.kind === 'task') {
+        state.tasks.forEach(function(x){ if (x.id === r.key) {
+          var parts = v.split('|'), nm = parts[0].trim(), nt = parts.slice(1).join('|').trim();
+          if (nm) x.name = nm;
+          if (nt) x.note = nt; else delete x.note;
+          delete x.due; delete x.anchor;
+        }});
+      } else if (r.kind === 'goal') {
+        state.items.forEach(function(i){ if (i.id === r.key) i.name = v; });
+      } else if (r.kind === 'gsec') {
+        state.items.forEach(function(i){ if (i.section === r.key) i.section = v; });
+      } else if (r.kind === 'ggroup') {
+        var sg = r.key.split('||');
+        state.items.forEach(function(i){ if (i.section === sg[0] && i.group === sg[1]) i.group = v; });
+      } else if (r.kind === 'list') {
+        var p = page(tab); if (!p) return;
+        var ix = p.lists.indexOf(r.key);
+        if (ix < 0 || (v !== r.key && p.lists.indexOf(v) >= 0)) return;
+        p.lists[ix] = v;
+        state.tasks.forEach(function(x){ if (x.page === p.id && x.list === r.key) x.list = v; });
+      }
+    });
+  }
+ 
   function monthNote(){
     var d = new Date(), last = new Date(d.getFullYear(), d.getMonth()+1, 0).getDate(), n = last - d.getDate();
     return n === 0 ? 'resets tonight' : 'resets in ' + n + (n === 1 ? ' day' : ' days');
   }
-
+ 
   function itemRow(it){
+    if (isRen('goal', it.id)) return renForm(it.name, true);
     var u = used(it), full = u >= it.count;
     var h = '<div class="item'+(full?' done':'')+'" data-id="'+it.id+'">';
     if (editing) h += '<button class="del" data-del="'+it.id+'" aria-label="Delete">×</button>';
@@ -101,18 +255,18 @@
     if (u > 0 && !editing) h += '<button class="minus" data-minus="'+it.id+'" aria-label="Undo">−</button>';
     return h + '</div>';
   }
-
-  function render(){
-    var h = '<header><h1>Goal Tracker</h1><button class="edit-btn" id="edit">'+(editing?'Done':'Edit')+'</button></header>';
+ 
+  function goalsHtml(){
+    var h = '';
     var sections = uniq(state.items.map(function(i){ return i.section; }));
     sections.forEach(function(sec){
       var inSec = state.items.filter(function(i){ return i.section === sec; });
       var monthly = inSec.every(function(i){ return i.period === 'month'; });
-      h += '<h2><span>'+esc(sec)+'</span><small>'+(monthly ? monthNote() : 'resets at midnight')+'</small></h2>';
+      h += isRen('gsec', sec) ? renForm(sec) : '<h2 data-ren="gsec" data-key="'+esc(sec)+'"><span>'+esc(sec)+'</span><small>'+(monthly ? monthNote() : 'resets at midnight')+'</small></h2>';
       uniq(inSec.map(function(i){ return i.group; })).forEach(function(g){
         var items = inSec.filter(function(i){ return i.group === g; });
         var doneN = items.filter(function(i){ return used(i) >= i.count; }).length;
-        h += '<h3 class="'+(doneN === items.length ? 'done' : '')+'"><span>'+esc(g)+'</span><span>'+doneN+'/'+items.length+'</span></h3>';
+        h += isRen('ggroup', sec+'||'+g) ? renForm(g) : '<h3 data-ren="ggroup" data-key="'+esc(sec+'||'+g)+'" class="'+(doneN === items.length ? 'done' : '')+'"><span>'+esc(g)+'</span><span>'+doneN+'/'+items.length+'</span></h3>';
         h += '<div class="list">' + items.map(itemRow).join('') + '</div>';
       });
     });
@@ -127,10 +281,65 @@
         + '<input id="c" type="number" min="1" max="31" value="1" aria-label="Times"></div>'
         + '<button type="submit">Add</button></form>';
     }
-    h += '<div class="note">Tap to cross off</div>';
-    document.getElementById('root').innerHTML = h;
+    return h + '<div class="note">Tap to cross off</div>';
   }
-
+ 
+  function pageHtml(p){
+    var h = '';
+    p.lists.forEach(function(L){
+      var items = viewTasks().filter(function(x){ return x.page === p.id && x.list === L; });
+      if (items.length && items.every(function(x){ return x.due; })) items.sort(function(a,b){ return a.due < b.due ? -1 : a.due > b.due ? 1 : 0; });
+      var open = items.filter(function(x){ return !x.done && !pending[x.id]; }), done = items.filter(function(x){ return x.done; });
+      var total = open.reduce(function(s,x){ return s + money(x.name); }, 0);
+      var meta = (L ? open.length : open.length + ' open') + (total ? ' · $' + (Math.round(total*100)/100) + ' total' : '');
+      h += isRen('list', L) ? renForm(L) : '<h2 data-ren="list" data-key="'+esc(L)+'"'+(L?'':' class="bare"')+'><span>'+esc(L)+(L?' ':'')+'<small>'+meta+'</small></span>'
+        + (done.length ? '<button class="clear" data-clear="'+esc(L)+'">Clear '+done.length+' done</button>' : '') + '</h2>';
+      h += '<div class="list">';
+      items.filter(function(x){ return !x.done; }).concat(done).forEach(function(x){
+        var off = x.done || !!pending[x.id];
+        if (isRen('task', x.id)) { h += renForm(x.name + (x.note ? ' | '+x.note : ''), true); return; }
+        h += '<div class="item'+(off?' done':'')+'" data-task="'+x.id+'">';
+        h += editing ? '<button class="del" data-tdel="'+x.id+'" aria-label="Delete">×</button>'
+                     : '<div class="check">'+(off?'✓':'')+'</div>';
+        var sp = splitPrice(x.name), dn = sp ? sp.name : x.name, sq = splitPeriod(dn), subs = [];
+        if (sq) dn = sq.name;
+        if (sp) subs.push(esc(sp.price));
+        if (sq) subs.push(esc(sq.period));
+        if (x.note) subs.push(esc(x.note));
+        h += '<div class="name">'+esc(dn)+(subs.length ? '<div class="sub">'+subs.join(' · ')+'</div>' : '')+'</div>';
+        if (editing && p.lists.length > 1) h += '<button class="minus" data-move="'+x.id+'" aria-label="Move to next section">⇄</button>';
+        h += '</div>';
+      });
+      h += '<form class="addrow" data-list="'+esc(L)+'"><span class="plus">+</span><input placeholder="Add task" maxlength="100" enterkeyhint="done"></form>';
+      h += '</div>';
+    });
+    if (editing) {
+      h += '<form id="addsec" class="inline"><input id="sn" placeholder="New section (e.g. Waiting)" maxlength="30" required><button type="submit">Add</button></form>';
+      h += '<button class="danger" id="deltab">'+(confirmDel ? 'Tap again to delete “'+esc(p.name)+'”' : 'Delete this tab')+'</button>';
+    }
+    return h + '<div class="note">Tap to cross off</div>';
+  }
+ 
+  function render(){
+    if (rollover()) save();
+    var p = tab === 'goals' ? null : page(tab);
+    var h = '<header><h1 data-ren="title">'+(p ? esc(p.name) : esc(state.goalsTitle || 'Goal Tracker'))+'</h1><button class="edit-btn" id="edit">'+(editing?'Done':'Edit')+'</button></header>';
+    h += '<div class="tabs" id="tabs"><button class="tab'+(tab==='goals'?' on':'')+'" data-tab="goals">'+esc(state.goalsName || 'Goals')+'</button>';
+    state.pages.forEach(function(pg){ h += '<button class="tab'+(tab===pg.id?' on':'')+'" data-tab="'+pg.id+'">'+esc(pg.name)+'</button>'; });
+    h += '<button class="tab add" id="addtab" aria-label="Add tab">+</button></div>';
+    if (addingTab) h += '<form id="newtab" class="inline"><input id="tn" placeholder="New tab name" maxlength="30" required><button type="submit">Add</button></form>';
+    if (renaming) {
+      var rp = renaming === 'goals' ? null : page(renaming);
+      var cur = rp ? rp.name : (state.goalsName || 'Goals');
+      h += '<form id="renametab" class="inline"><input id="rn" value="'+esc(cur)+'" maxlength="30" required aria-label="Tab name"><button type="submit">Rename</button></form>';
+    }
+    h += p ? pageHtml(p) : goalsHtml();
+    h += toastHtml();
+    document.getElementById('root').innerHTML = h;
+    var tabs = document.getElementById('tabs'), on = tabs.querySelector('.tab.on');
+    if (on && on.offsetLeft + on.offsetWidth > tabs.clientWidth) tabs.scrollLeft = on.offsetLeft - 4;
+  }
+ 
   function buildDoc(){
     var json = JSON.stringify(state).replace(/</g, '\\u003c');
     return '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
@@ -140,23 +349,82 @@
       + '<script type="application/json" id="state">' + json + '<\/script>\n'
       + '<script id="app">' + document.getElementById('app').textContent + '<\/script>\n</body>\n</html>\n';
   }
-
+ 
   function save(){
     state.updated = Date.now();
     try { localStorage.setItem(LS, JSON.stringify(state)); } catch(e) {}
     if (!art) return;
     clearTimeout(timer);
-    timer = setTimeout(function(){ art.publish(buildDoc()).catch(function(){}); }, 1500);
+    timer = setTimeout(flush, 1500);
   }
-
+ 
+  function flush(){
+    if (Object.keys(pending).length || rename || renaming || addingTab) { clearTimeout(timer); timer = setTimeout(flush, 1000); return; }
+    art.publish(buildDoc()).catch(function(){});
+  }
+ 
   function change(fn){ fn(); save(); render(); }
-
+  function attr(t, a){ return t.getAttribute ? t.getAttribute(a) : null; }
+ 
   document.addEventListener('click', function(e){
     var t = e.target;
-    if (t.id === 'edit') { editing = !editing; render(); return; }
-    var del = t.getAttribute && t.getAttribute('data-del');
+    if (t.id === 'edit') { editing = !editing; confirmDel = false; render(); return; }
+    if (t.id === 'addtab') {
+      addingTab = !addingTab; render();
+      if (addingTab) document.getElementById('tn').focus();
+      return;
+    }
+    if (t.id === 'deltab') {
+      if (!confirmDel) { confirmDel = true; render(); return; }
+      var gone = tab;
+      change(function(){
+        state.pages = state.pages.filter(function(x){ return x.id !== gone; });
+        state.tasks = state.tasks.filter(function(x){ return x.page !== gone; });
+        setTab('goals');
+      });
+      return;
+    }
+    var tb = attr(t, 'data-tab');
+    if (tb) {
+      var now = Date.now();
+      if (lastTap.id === tb && now - lastTap.t < 400) {
+        lastTap = { id: null, t: 0 };
+        renaming = tb; addingTab = false; render();
+        var ri = document.getElementById('rn'); if (ri) { ri.focus(); ri.select(); }
+        return;
+      }
+      lastTap = { id: tb, t: now };
+      if (tb !== tab) { setTab(tb); renaming = null; render(); }
+      return;
+    }
+    if (t.id === 'undo') {
+      Object.keys(pending).sort(function(a,b){ return pending[a].idx - pending[b].idx; }).forEach(restoreTask);
+      save(); render(); return;
+    }
+    if (t.closest && t.closest('#renameform')) return;
+    var ren = t.closest && t.closest('[data-ren]');
+    if (ren && attr(t, 'data-clear') === null) {
+      var rk = ren.getAttribute('data-ren'), rkey = ren.getAttribute('data-key');
+      if (dbl('ren:'+rk+':'+rkey)) {
+        if (rk === 'title') { rename = null; renaming = tab; render(); var ri2 = document.getElementById('rn'); if (ri2) { ri2.focus(); ri2.select(); } }
+        else openRename(rk, rkey);
+      }
+      return;
+    }
+    var tdel = attr(t, 'data-tdel');
+    if (tdel) { if (pending[tdel]) { clearTimeout(pending[tdel].timer); delete pending[tdel]; } change(function(){ state.tasks = state.tasks.filter(function(x){ return x.id !== tdel; }); }); return; }
+    var mv = attr(t, 'data-move');
+    if (mv) {
+      change(function(){ state.tasks.forEach(function(x){
+        if (x.id === mv) { var ls = page(x.page).lists, i = ls.indexOf(x.list); x.list = ls[(i+1) % ls.length]; }
+      }); });
+      return;
+    }
+    var cl = attr(t, 'data-clear');
+    if (cl !== null) { change(function(){ state.tasks = state.tasks.filter(function(x){ return !(x.page === tab && x.list === cl && x.done); }); }); return; }
+    var del = attr(t, 'data-del');
     if (del) { change(function(){ state.items = state.items.filter(function(i){ return i.id !== del; }); }); return; }
-    var minus = t.getAttribute && t.getAttribute('data-minus');
+    var minus = attr(t, 'data-minus');
     if (minus) {
       change(function(){ state.items.forEach(function(i){
         if (i.id === minus) { var u = used(i); i.key = keyFor(i.period); i.done = Math.max(0, u-1); }
@@ -164,32 +432,97 @@
       return;
     }
     if (editing) return;
+    var trow = t.closest && t.closest('[data-task]');
+    if (trow) {
+      var tid = trow.getAttribute('data-task'), d2 = dbl('task:'+tid);
+      if (pending[tid]) {
+        restoreTask(tid);
+        if (d2) { rename = { kind: 'task', key: tid }; renaming = null; }
+        save(); render();
+        if (d2) focusRen();
+        return;
+      }
+      completeTask(tid);
+      return;
+    }
     var row = t.closest && t.closest('.item');
     if (row) {
       var id = row.getAttribute('data-id');
+      if (dbl('goal:'+id)) {
+        change(function(){
+          state.items.forEach(function(i){ if (i.id === id && goalSnap && goalSnap.id === id) { i.done = goalSnap.done; i.key = goalSnap.key; } });
+          rename = { kind: 'goal', key: id }; renaming = null;
+        });
+        focusRen();
+        return;
+      }
       change(function(){ state.items.forEach(function(i){
-        if (i.id === id) { var u = used(i); if (u < i.count) { i.key = keyFor(i.period); i.done = u+1; } }
+        if (i.id === id) { goalSnap = { id: id, done: i.done, key: i.key }; var u = used(i); if (u < i.count) { i.key = keyFor(i.period); i.done = u+1; } }
       }); });
     }
   });
-
+ 
   document.addEventListener('submit', function(e){
     e.preventDefault();
+    var f = e.target;
+    if (f.id === 'newtab') {
+      var tn = document.getElementById('tn').value.trim();
+      if (!tn) return;
+      var nid = 'p'+Date.now().toString(36);
+      change(function(){ state.pages.push({ id: nid, name: tn, lists: [''] }); setTab(nid); });
+      return;
+    }
+    if (f.id === 'renameform') { commitRename(); return; }
+    if (f.id === 'renametab') {
+      var rn = document.getElementById('rn').value.trim(), who = renaming;
+      renaming = null;
+      if (!rn) { render(); return; }
+      change(function(){
+        if (who === 'goals') { state.goalsName = rn; state.goalsTitle = rn; }
+        else { var rp2 = page(who); if (rp2) rp2.name = rn; }
+      });
+      return;
+    }
+    if (f.id === 'addsec') {
+      var sn = document.getElementById('sn').value.trim(), p = page(tab);
+      if (!sn || !p || p.lists.indexOf(sn) >= 0) return;
+      change(function(){
+        var empty = p.lists.length === 1 && p.lists[0] === '' && !state.tasks.some(function(x){ return x.page === p.id; });
+        if (empty) p.lists = [sn]; else p.lists.push(sn);
+      });
+      return;
+    }
+    if (f.classList && f.classList.contains('addrow')) {
+      var L = f.getAttribute('data-list'), v = f.querySelector('input').value.trim();
+      if (!v) return;
+      var parts = v.split('|'), name = parts[0].trim(), note = parts.slice(1).join('|').trim();
+      if (!name) return;
+      change(function(){
+        var it = { id: 'k'+Date.now().toString(36), page: tab, list: L, name: name, done: false };
+        if (note) it.note = note;
+        state.tasks.push(it);
+      });
+      var forms = document.querySelectorAll('form.addrow');
+      for (var q=0; q<forms.length; q++) if (forms[q].getAttribute('data-list') === L) forms[q].querySelector('input').focus();
+      return;
+    }
     var n = document.getElementById('n').value.trim(),
         s = document.getElementById('s').value.trim(),
         g = document.getElementById('g').value.trim();
     if (!n || !s || !g) return;
     var c = Math.max(1, Math.min(31, parseInt(document.getElementById('c').value, 10) || 1));
-    var p = document.getElementById('p').value;
+    var per = document.getElementById('p').value;
     change(function(){
-      state.items.push({ id: 'i'+Date.now().toString(36), section: s, group: g, name: n, period: p, count: c, done: 0, key: '' });
+      state.items.push({ id: 'i'+Date.now().toString(36), section: s, group: g, name: n, period: per, count: c, done: 0, key: '' });
     });
   });
-
+ 
+  document.addEventListener('focusout', function(e){ if (e.target.id === 'rn2') setTimeout(commitRename, 0); });
+ 
   render();
-  setInterval(render, 60000);
+  setInterval(function(){ var a = document.activeElement; if (!a || a.tagName !== 'INPUT') render(); }, 60000);
   document.addEventListener('visibilitychange', function(){ if (!document.hidden) render(); });
-
+ 
   if (window.claude && window.claude.use) {
     window.claude.use('artifact').then(function(a){ art = a; }).catch(function(){});
   }
@@ -197,3 +530,4 @@
 </script>
 </body>
 </html>
+ 
