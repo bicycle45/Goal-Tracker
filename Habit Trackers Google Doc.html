@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Goal Tracker</title>
+<style id="css">
+  :root { --bg:#141414; --card:#1e1e1e; --line:#2c2c2c; --text:#ececec; --dim:#7a7a7a; --accent:#cfcfcf; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; background:var(--bg); color:var(--text);
+    font:17px/1.35 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
+  .wrap { max-width:520px; margin:0 auto;
+    padding:calc(20px + env(safe-area-inset-top)) 18px calc(40px + env(safe-area-inset-bottom)); }
+  header { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; }
+  h1 { font-size:26px; margin:0; font-weight:700; }
+  .edit-btn { background:none; border:0; color:var(--dim); font-size:16px; padding:6px; cursor:pointer; }
+  h2 { font-size:20px; font-weight:700; margin:28px 0 4px; display:flex; justify-content:space-between; align-items:baseline; }
+  h2 small { font-size:13px; font-weight:400; color:var(--dim); }
+  h3 { font-size:13px; text-transform:uppercase; letter-spacing:.08em; color:var(--dim);
+    font-weight:600; margin:14px 0 6px; display:flex; justify-content:space-between; }
+  h3.done span:first-child { text-decoration:line-through; }
+  .list { background:var(--card); border-radius:14px; overflow:hidden; }
+  .item { display:flex; align-items:center; gap:12px; padding:14px 16px; border-top:1px solid var(--line);
+    cursor:pointer; user-select:none; }
+  .item:first-child { border-top:0; }
+  .name { flex:1; transition:color .15s; }
+  .item.done .name { text-decoration:line-through; color:var(--dim); }
+  .dots { display:flex; gap:6px; }
+  .dot { width:12px; height:12px; border-radius:50%; border:1.5px solid var(--dim); }
+  .dot.on { background:var(--accent); border-color:var(--accent); }
+  .minus, .del { background:none; border:1px solid var(--line); color:var(--dim); border-radius:8px;
+    width:30px; height:30px; font-size:17px; line-height:1; cursor:pointer; flex:none; }
+  .del { color:#d26b6b; }
+  form { margin-top:28px; background:var(--card); border-radius:14px; padding:14px; display:grid; gap:10px; }
+  form input, form select { width:100%; background:#111; color:var(--text); border:1px solid var(--line);
+    border-radius:10px; padding:11px 12px; font:inherit; }
+  .row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  form button { background:var(--accent); color:#111; border:0; border-radius:10px; padding:12px; font:inherit;
+    font-weight:600; cursor:pointer; }
+  .note { color:var(--dim); font-size:13px; margin-top:22px; text-align:center; }
+</style>
+</head>
+<body>
+<div class="wrap" id="root"></div>
+<script type="application/json" id="state">{"updated":0,"items":[
+{"id":"r1","section":"Routines","group":"Morning","name":"Getting ready","period":"day","count":1,"done":0,"key":""},
+{"id":"r2","section":"Routines","group":"Morning","name":"Breakfast","period":"day","count":1,"done":0,"key":""},
+{"id":"r3","section":"Routines","group":"Morning","name":"Planning","period":"day","count":1,"done":0,"key":""},
+{"id":"r4","section":"Routines","group":"Night","name":"Getting ready","period":"day","count":1,"done":0,"key":""},
+{"id":"r5","section":"Routines","group":"Night","name":"Reading","period":"day","count":1,"done":0,"key":""},
+{"id":"r6","section":"Routines","group":"Night","name":"Reflection","period":"day","count":1,"done":0,"key":""},
+{"id":"a1","section":"Activities","group":"Health","name":"Meditation","period":"day","count":1,"done":0,"key":""},
+{"id":"a2","section":"Activities","group":"Health","name":"Cardio","period":"day","count":1,"done":0,"key":""},
+{"id":"a3","section":"Activities","group":"Health","name":"Walk","period":"day","count":1,"done":0,"key":""},
+{"id":"a4","section":"Activities","group":"Productivity","name":"UCAT","period":"day","count":1,"done":0,"key":""},
+{"id":"a5","section":"Activities","group":"Productivity","name":"Reading","period":"day","count":1,"done":0,"key":""},
+{"id":"a6","section":"Activities","group":"Productivity","name":"Knowledge","period":"day","count":1,"done":0,"key":""},
+{"id":"a7","section":"Activities","group":"Productivity","name":"Content","period":"day","count":1,"done":0,"key":""},
+{"id":"m1","section":"Meals","group":"Lunch","name":"Consume supplements","period":"day","count":1,"done":0,"key":""},
+{"id":"m2","section":"Meals","group":"Lunch","name":"Light movement","period":"day","count":1,"done":0,"key":""},
+{"id":"m3","section":"Meals","group":"Dinner","name":"Finish eating early","period":"day","count":1,"done":0,"key":""},
+{"id":"m4","section":"Meals","group":"Dinner","name":"Post meal walk","period":"day","count":1,"done":0,"key":""},
+{"id":"t1","section":"Indulgence","group":"This month","name":"Late nights","period":"month","count":2,"done":0,"key":""},
+{"id":"t2","section":"Indulgence","group":"This month","name":"Cheat meal","period":"month","count":4,"done":0,"key":""}
+]}</script>
+<script id="app">
+(function(){
+  var state = JSON.parse(document.getElementById('state').textContent);
+  var LS = 'simple-tracker-state-v2';
+  try {
+    var local = JSON.parse(localStorage.getItem(LS) || 'null');
+    if (local && local.updated > state.updated) state = local;
+  } catch(e) {}
+
+  var editing = false, art = null, timer = null;
+
+  function pad(n){ return n < 10 ? '0'+n : ''+n; }
+  function keyFor(period){
+    var d = new Date(), m = d.getFullYear()+'-'+pad(d.getMonth()+1);
+    return period === 'day' ? m+'-'+pad(d.getDate()) : m;
+  }
+  function used(it){ return it.key === keyFor(it.period) ? it.done : 0; }
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  function uniq(arr){ var o=[]; arr.forEach(function(x){ if (o.indexOf(x) < 0) o.push(x); }); return o; }
+
+  function monthNote(){
+    var d = new Date(), last = new Date(d.getFullYear(), d.getMonth()+1, 0).getDate(), n = last - d.getDate();
+    return n === 0 ? 'resets tonight' : 'resets in ' + n + (n === 1 ? ' day' : ' days');
+  }
+
+  function itemRow(it){
+    var u = used(it), full = u >= it.count;
+    var h = '<div class="item'+(full?' done':'')+'" data-id="'+it.id+'">';
+    if (editing) h += '<button class="del" data-del="'+it.id+'" aria-label="Delete">×</button>';
+    h += '<div class="name">'+esc(it.name)+'</div>';
+    if (it.count > 1) {
+      h += '<div class="dots">';
+      for (var k=0;k<it.count;k++) h += '<div class="dot'+(k<u?' on':'')+'"></div>';
+      h += '</div>';
+    }
+    if (u > 0 && !editing) h += '<button class="minus" data-minus="'+it.id+'" aria-label="Undo">−</button>';
+    return h + '</div>';
+  }
+
+  function render(){
+    var h = '<header><h1>Goal Tracker</h1><button class="edit-btn" id="edit">'+(editing?'Done':'Edit')+'</button></header>';
+    var sections = uniq(state.items.map(function(i){ return i.section; }));
+    sections.forEach(function(sec){
+      var inSec = state.items.filter(function(i){ return i.section === sec; });
+      var monthly = inSec.every(function(i){ return i.period === 'month'; });
+      h += '<h2><span>'+esc(sec)+'</span><small>'+(monthly ? monthNote() : 'resets at midnight')+'</small></h2>';
+      uniq(inSec.map(function(i){ return i.group; })).forEach(function(g){
+        var items = inSec.filter(function(i){ return i.group === g; });
+        var doneN = items.filter(function(i){ return used(i) >= i.count; }).length;
+        h += '<h3 class="'+(doneN === items.length ? 'done' : '')+'"><span>'+esc(g)+'</span><span>'+doneN+'/'+items.length+'</span></h3>';
+        h += '<div class="list">' + items.map(itemRow).join('') + '</div>';
+      });
+    });
+    if (editing) {
+      var secs = sections.map(function(s){ return '<option value="'+esc(s)+'">'; }).join('');
+      var grps = uniq(state.items.map(function(i){ return i.group; })).map(function(s){ return '<option value="'+esc(s)+'">'; }).join('');
+      h += '<form id="add"><input id="n" placeholder="Name (e.g. Stretching)" maxlength="60" required>'
+        + '<div class="row"><input id="s" list="secs" placeholder="Section (e.g. Activities)" required>'
+        + '<input id="g" list="grps" placeholder="Group (e.g. Health)" required></div>'
+        + '<datalist id="secs">'+secs+'</datalist><datalist id="grps">'+grps+'</datalist>'
+        + '<div class="row"><select id="p"><option value="day">Resets daily</option><option value="month">Resets monthly</option></select>'
+        + '<input id="c" type="number" min="1" max="31" value="1" aria-label="Times"></div>'
+        + '<button type="submit">Add</button></form>';
+    }
+    h += '<div class="note">Tap to cross off</div>';
+    document.getElementById('root').innerHTML = h;
+  }
+
+  function buildDoc(){
+    var json = JSON.stringify(state).replace(/</g, '\\u003c');
+    return '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
+      + '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
+      + '<title>Goal Tracker</title>\n<style id="css">' + document.getElementById('css').textContent + '</style>\n</head>\n<body>\n'
+      + '<div class="wrap" id="root"></div>\n'
+      + '<script type="application/json" id="state">' + json + '<\/script>\n'
+      + '<script id="app">' + document.getElementById('app').textContent + '<\/script>\n</body>\n</html>\n';
+  }
+
+  function save(){
+    state.updated = Date.now();
+    try { localStorage.setItem(LS, JSON.stringify(state)); } catch(e) {}
+    if (!art) return;
+    clearTimeout(timer);
+    timer = setTimeout(function(){ art.publish(buildDoc()).catch(function(){}); }, 1500);
+  }
+
+  function change(fn){ fn(); save(); render(); }
+
+  document.addEventListener('click', function(e){
+    var t = e.target;
+    if (t.id === 'edit') { editing = !editing; render(); return; }
+    var del = t.getAttribute && t.getAttribute('data-del');
+    if (del) { change(function(){ state.items = state.items.filter(function(i){ return i.id !== del; }); }); return; }
+    var minus = t.getAttribute && t.getAttribute('data-minus');
+    if (minus) {
+      change(function(){ state.items.forEach(function(i){
+        if (i.id === minus) { var u = used(i); i.key = keyFor(i.period); i.done = Math.max(0, u-1); }
+      }); });
+      return;
+    }
+    if (editing) return;
+    var row = t.closest && t.closest('.item');
+    if (row) {
+      var id = row.getAttribute('data-id');
+      change(function(){ state.items.forEach(function(i){
+        if (i.id === id) { var u = used(i); if (u < i.count) { i.key = keyFor(i.period); i.done = u+1; } }
+      }); });
+    }
+  });
+
+  document.addEventListener('submit', function(e){
+    e.preventDefault();
+    var n = document.getElementById('n').value.trim(),
+        s = document.getElementById('s').value.trim(),
+        g = document.getElementById('g').value.trim();
+    if (!n || !s || !g) return;
+    var c = Math.max(1, Math.min(31, parseInt(document.getElementById('c').value, 10) || 1));
+    var p = document.getElementById('p').value;
+    change(function(){
+      state.items.push({ id: 'i'+Date.now().toString(36), section: s, group: g, name: n, period: p, count: c, done: 0, key: '' });
+    });
+  });
+
+  render();
+  setInterval(render, 60000);
+  document.addEventListener('visibilitychange', function(){ if (!document.hidden) render(); });
+
+  if (window.claude && window.claude.use) {
+    window.claude.use('artifact').then(function(a){ art = a; }).catch(function(){});
+  }
+})();
+</script>
+</body>
+</html>
