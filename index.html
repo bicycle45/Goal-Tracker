@@ -93,11 +93,11 @@
     seed.tasks.forEach(function(x){ if (x.page !== 'tasks') state.tasks.push(x); });
   }
   delete state.lists;
- 
+
   var editing = false, art = null, timer = null, addingTab = false, confirmDel = false, renaming = null, lastTap = { id: null, t: 0 };
   var TAB_LS = 'simple-tracker-tab', tab = 'goals';
   try { tab = localStorage.getItem(TAB_LS) || 'goals'; } catch(e) {}
- 
+
   function pad(n){ return n < 10 ? '0'+n : ''+n; }
   function keyFor(period){
     var d = new Date(), m = d.getFullYear()+'-'+pad(d.getMonth()+1);
@@ -166,7 +166,7 @@
   }
   function setTab(t){ tab = t; editing = false; addingTab = false; confirmDel = false; try { localStorage.setItem(TAB_LS, tab); } catch(e) {} }
   if (tab !== 'goals' && !page(tab)) tab = 'goals';
- 
+
   var rename = null, goalSnap = null, pending = {};
   function completeTask(id){
     var idx = -1;
@@ -236,12 +236,12 @@
       }
     });
   }
- 
+
   function monthNote(){
     var d = new Date(), last = new Date(d.getFullYear(), d.getMonth()+1, 0).getDate(), n = last - d.getDate();
     return n === 0 ? 'resets tonight' : 'resets in ' + n + (n === 1 ? ' day' : ' days');
   }
- 
+
   function itemRow(it){
     if (isRen('goal', it.id)) return renForm(it.name, true);
     var u = used(it), full = u >= it.count;
@@ -256,7 +256,7 @@
     }
     return h + '</div>';
   }
- 
+
   function goalsHtml(){
     var h = '';
     var sections = uniq(state.items.map(function(i){ return i.section; }));
@@ -284,7 +284,7 @@
     }
     return h + '<div class="note">Tap to cross off</div>';
   }
- 
+
   function pageHtml(p){
     var h = '';
     p.lists.forEach(function(L){
@@ -320,7 +320,7 @@
     }
     return h + '<div class="note">Tap to cross off</div>';
   }
- 
+
   function render(){
     if (rollover()) save();
     var p = tab === 'goals' ? null : page(tab);
@@ -340,7 +340,7 @@
     var tabs = document.getElementById('tabs'), on = tabs.querySelector('.tab.on');
     if (on && on.offsetLeft + on.offsetWidth > tabs.clientWidth) tabs.scrollLeft = on.offsetLeft - 4;
   }
- 
+
   function buildDoc(){
     var json = JSON.stringify(state).replace(/</g, '\\u003c');
     return '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
@@ -350,7 +350,7 @@
       + '<script type="application/json" id="state">' + json + '<\/script>\n'
       + '<script id="app">' + document.getElementById('app').textContent + '<\/script>\n</body>\n</html>\n';
   }
- 
+
   function save(){
     state.updated = Date.now();
     try { localStorage.setItem(LS, JSON.stringify(state)); } catch(e) {}
@@ -358,15 +358,15 @@
     clearTimeout(timer);
     timer = setTimeout(flush, 1500);
   }
- 
+
   function flush(){
     if (Object.keys(pending).length || rename || renaming || addingTab) { clearTimeout(timer); timer = setTimeout(flush, 1000); return; }
     art.publish(buildDoc()).catch(function(){});
   }
- 
+
   function change(fn){ fn(); save(); render(); }
   function attr(t, a){ return t.getAttribute ? t.getAttribute(a) : null; }
- 
+
   document.addEventListener('click', function(e){
     var t = e.target;
     if (t.id === 'edit') { editing = !editing; confirmDel = false; render(); return; }
@@ -465,7 +465,7 @@
       }); });
     }
   });
- 
+
   document.addEventListener('submit', function(e){
     e.preventDefault();
     var f = e.target;
@@ -520,13 +520,13 @@
       state.items.push({ id: 'i'+Date.now().toString(36), section: s, group: g, name: n, period: per, count: c, done: 0, key: '' });
     });
   });
- 
+
   document.addEventListener('focusout', function(e){ if (e.target.id === 'rn2') setTimeout(commitRename, 0); });
- 
+
   render();
   setInterval(function(){ var a = document.activeElement; if (!a || a.tagName !== 'INPUT') render(); }, 60000);
   document.addEventListener('visibilitychange', function(){ if (!document.hidden) render(); });
- 
+
   if (window.claude && window.claude.use) {
     window.claude.use('artifact').then(function(a){ art = a; }).catch(function(){});
   }
@@ -534,4 +534,3 @@
 </script>
 </body>
 </html>
- 
